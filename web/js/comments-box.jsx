@@ -20,11 +20,15 @@ var CommentBox = React.createClass({
     },
     render: function() {
         return (
-            <div className="commentBox">
-                <h1>Comments</h1>
+            <div className="panel panel-default">
+            <div className="panel-heading">
+                <h1 className="panel-title">Comments</h1>
+            </div>
+            <div className="panel-body">
                 <CommentList data={this.state.data} />
                 <CommentForm />
             </div>
+        </div>
         );
     }
 });
@@ -49,11 +53,11 @@ var Comment = React.createClass({
     render: function() {
         var rawMarkup = converter.makeHtml(this.props.children.toString());
         return (
-            <div className="comment">
-                <h2 className="commentAuthor">
-                    {this.props.author}
-                </h2>
-                <span dangerouslySetInnerHTML={{__html: rawMarkup}} />
+            <div className="panel panel-default">
+            <div className="panel-heading">{this.props.author}</div>
+                <div className="panel-body">
+                    <span dangerouslySetInnerHTML={{__html: rawMarkup}} />
+                </div>
             </div>
         );
     }
