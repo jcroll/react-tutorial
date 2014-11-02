@@ -68,6 +68,6 @@ var CommentForm = React.createClass({
     }
 });
 React.render(
-    <CommentBox url="/api/comments" pollInterval={2000} />,
+    <CommentBox url={commentsUrl} pollInterval={2000} />,
     document.getElementById('content')
 );
