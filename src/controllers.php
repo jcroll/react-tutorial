@@ -14,6 +14,20 @@ $app->get('/', function () use ($app) {
 ->bind('homepage')
 ;
 
+$api = $app['controllers_factory'];
+$api->get('/comments', function () {
+    $comments = [
+        ['author' => 'Pete Hunt',    'text' => 'This is one comment'],
+        ['author' => 'Jordan Walke', 'text' => 'This is *another* comment']
+    ];
+
+    return new JsonResponse($comments);
+})
+->bind('api_comments')
+;
+
+$app->mount('/api', $api);
+
 $app->error(function (\Exception $e, $code) use ($app) {
     if ($app['debug']) {
         return;
