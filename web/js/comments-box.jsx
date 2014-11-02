@@ -65,9 +65,26 @@ var Comment = React.createClass({
 var CommentForm = React.createClass({
     render: function() {
         return (
-            <div className="commentForm">
-            Hello, world! I am a CommentForm.
-            </div>
+            <form className="form-horizontal" role="form">
+                <div className="form-group">
+                    <label for="user-name" className="col-sm-2 control-label">Name</label>
+                    <div className="col-sm-10">
+                        <input type="text" id="user-name" className="form-control" placeholder="Your name"/>
+                    </div>
+                </div>
+                    <div className="form-group">
+                        <label for="comment" className="col-sm-2 control-label">Comment</label>
+                        <div className="col-sm-10">
+                            <textarea id="comment" className="form-control" rows="3" placeholder="Say something...">
+                            </textarea>
+                        </div>
+                    </div>
+                    <div className="form-group">
+                        <div className="col-sm-offset-2 col-sm-10">
+                            <button type="submit" className="btn btn-default">Post</button>
+                        </div>
+                    </div>
+            </form>
         );
     }
 });
