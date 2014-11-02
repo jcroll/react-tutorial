@@ -8,7 +8,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 //Request::setTrustedProxies(array('127.0.0.1'));
 
-$app->get('/', function () use ($app) {
+$app->get('/', function (Request $request) use ($app) {
 
     return $app['twig']->render('index.html', array());
 })
@@ -16,17 +16,26 @@ $app->get('/', function () use ($app) {
 ;
 
 $api = $app['controllers_factory'];
-$api->get('/comments', function () use($app) {
+$api->get('/comments', function (Request $request) use($app) {
     $session = $app['session'];
     if (!$session->has('comments')) {
-        $session->set('comments', [
+        $initialComments = [
             ['author' => 'Pete Hunt',    'text' => 'This is one comment'],
             ['author' => 'Jordan Walke', 'text' => 'This is *another* comment']
-        ]);
+        ];
+        $session->set('comments', $initialComments);
     }
 
+    $comments = $session->get('comments');
 
-    return new JsonResponse($session->get('comments'));
+    if ('POST' === $request->getMethod()) {
+        if ($comment = $request->request->get('comment')) {
+            $comments[] = $comment;
+            $session->set('comments', $comments);
+        }
+    }
+
+    return new JsonResponse($comments);
 })
 ->bind('api_comments')
 ;

@@ -6,22 +6,28 @@ server {
 
     server_name {{ servername }};
 
+    #site root is redirected to the app boot script
+    location = / {
+        try_files @site @site;
+    }
+
+    #all other locations try other files first and go to our front controller if none of them exists
     location / {
-        try_files $uri $uri/ /index.php?$query_string;
+        try_files $uri $uri/ @site;
     }
 
-    error_page 404 /404.html;
-
-    error_page 500 502 503 504 /50x.html;
-        location = /50x.html {
-        root /usr/share/nginx/www;
-    }
-
+    #return 404 for all php files as we do have a front controller
     location ~ \.php$ {
-        fastcgi_split_path_info ^(.+\.php)(/.+)$;
-        fastcgi_pass unix:/var/run/php5-fpm.sock;
-        fastcgi_index index.php;
-        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        return 404;
+    }
+    
+    location @site {
+        fastcgi_pass   unix:/var/run/php-fpm/www.sock;
         include fastcgi_params;
+        fastcgi_param  SCRIPT_FILENAME $document_root/index.php;
+        #uncomment when running via https
+        #fastcgi_param HTTPS on;
     }
 }
+
+

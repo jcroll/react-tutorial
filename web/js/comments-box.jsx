@@ -11,6 +11,20 @@ var CommentBox = React.createClass({
             }.bind(this)
         });
     },
+    handleCommentSubmit: function(comment) {
+        $.ajax({
+            url: this.props.url,
+            dataType: 'json',
+            type: 'POST',
+            data: comment,
+            success: function(data) {
+                this.setState({data: data});
+            }.bind(this),
+            error: function(xhr, status, err) {
+                console.error(this.props.url, status, err.toString());
+            }.bind(this)
+        });
+    },
     getInitialState: function() {
         return {data: []};
     },
@@ -26,7 +40,7 @@ var CommentBox = React.createClass({
             </div>
             <div className="panel-body">
                 <CommentList data={this.state.data} />
-                <CommentForm />
+                <CommentForm onCommentSubmit={this.handleCommentSubmit} />
             </div>
         </div>
         );
@@ -63,19 +77,31 @@ var Comment = React.createClass({
     }
 });
 var CommentForm = React.createClass({
+    handleSubmit: function(e) {
+        e.preventDefault();
+        var author = this.refs.author.getDOMNode().value.trim();
+        var text = this.refs.text.getDOMNode().value.trim();
+        if (!text || !author) {
+            return;
+        }
+        this.props.onCommentSubmit({author: author, text: text});
+        this.refs.author.getDOMNode().value = '';
+        this.refs.text.getDOMNode().value = '';
+        return;
+    },
     render: function() {
         return (
-            <form className="form-horizontal" role="form">
+            <form className="form-horizontal" role="form" onSubmit={this.handleSubmit}>
                 <div className="form-group">
                     <label for="user-name" className="col-sm-2 control-label">Name</label>
                     <div className="col-sm-10">
-                        <input type="text" id="user-name" className="form-control" placeholder="Your name"/>
+                        <input type="text" id="user-name" className="form-control" placeholder="Your name" ref="author"/>
                     </div>
                 </div>
                     <div className="form-group">
                         <label for="comment" className="col-sm-2 control-label">Comment</label>
                         <div className="col-sm-10">
-                            <textarea id="comment" className="form-control" rows="3" placeholder="Say something...">
+                            <textarea id="comment" className="form-control" rows="3" placeholder="Say something..." ref="text">
                             </textarea>
                         </div>
                     </div>
