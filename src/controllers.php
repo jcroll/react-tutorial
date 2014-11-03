@@ -16,7 +16,7 @@ $app->get('/', function (Request $request) use ($app) {
 ;
 
 $api = $app['controllers_factory'];
-$api->get('/comments', function (Request $request) use($app) {
+$api->match('/comments', function (Request $request) use($app) {
     $session = $app['session'];
     if (!$session->has('comments')) {
         $initialComments = [
@@ -29,9 +29,11 @@ $api->get('/comments', function (Request $request) use($app) {
     $comments = $session->get('comments');
 
     if ('POST' === $request->getMethod()) {
-        if ($comment = $request->request->get('comment')) {
-            $comments[] = $comment;
-            $session->set('comments', $comments);
+        if ($author = $request->request->get('author')) {
+            if ($text = $request->request->get('text')) {
+                $comments[] = ['author' => $author, 'text' => $text];
+                $session->set('comments', $comments);
+            }
         }
     }
 
